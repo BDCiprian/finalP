@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Antrenor{% endblock %}
+{% block content %}
+    {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <br>
+        <p class="lead">Bun venit, <strong>{{ user.username }}</strong>!</p>
+
+        {% if clients %}
+            {% for client in clients %}
+                <div class="card mb-4 client-container" data-client-id="{{ client.user.id }}">
+                    <div class="card-header">
+                        <h5 class="mb-0">Client: {{ client.user.first_name }} {{ client.user.last_name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="mb-3">
+                            {% csrf_token %}
+                            <input type="hidden" name="client_id" value="{{ client.user.id }}">
+
+                            
+                            <div class="mb-3">
+                                <label for="date_{{ client.user.id }}" class="form-label">Data antrenamentului:</label>
+                                <input type="date" id="date_{{ client.user.id }}" name="date" class="form-control" min="{{ today}}" required >
+                            </div>
+
+                            <div class="mb-3">
+                              <label class="form-label">Exerciții:</label>
+
+                              <!-- Search input -->
+                              <input type="text" class="form-control mb-2 exercise-search" placeholder="Caută exerciții..." 
+                                     oninput="filterExercises(this, '{{ client.user.id }}')">
+
+                              <!-- Scrollable, filtrabil -->
+                              <div id="exercise-list-{{ client.user.id }}" class="exercise-checkboxes mb-3" 
+                                   style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; display: block; background: #f8f9fa;">
+                                {% for exercise in exercises %}
+                                  <div class="form-check exercise-item" data-exercise="{{ exercise|lower }}">
+                                    <input type="checkbox" class="form-check-input exercise-checkbox" id="exercise_{{ client.user.id }}_{{ forloop.counter }}" value="{{ exercise }}">
+                                    <label class="form-check-label" for="exercise_{{ client.user.id }}_{{ forloop.counter }}">{{ exercise }}</label>
+                                  </div>
+                                {% endfor %}
+                              </div>
+                            </div>
+
+
+
+                                <div class="mb-3">
+                                  <label for="workout-description-{{ client.user.id }}" class="form-label">Descriere antrenament:</label>
+                                  <textarea id="workout-description-{{ client.user.id }}" name="workout" class="form-control workout-description" rows="2" required></textarea>
+                                </div>
+
+                            <button type="submit" class="btn btn-primary">Salvează</button>
+                        </form>
+
+                        <h6>Antrenamente existente:</h6>
+                            <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; padding: 5px; background-color: #f9f9f9;">
+                                <ul class="list-group mb-0">
+                                    {% for plan in plans %}
+                                        {% if plan.client == client.user %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-start flex-column">
+                                                <div class="mb-2 w-100">
+                                                    <strong>{{ plan.date|date:"j F Y" }}:</strong>
+                                                    <pre class="mb-1">{{ plan.workout_description }}</pre>
+                                                </div>
+                                                <form method="post" action="{% url 'delete_workout' plan.id %}" onsubmit="return confirm('Ești sigur că vrei să ștergi acest antrenament?');" class="w-100 text-end">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm btn-danger">Șterge</button>
+                                                </form>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning">Încă nu ai clienti.</div>
+        {% endif %}
+
+    </div>
+
+<script>
+  // Activează selecția exercițiilor pentru fiecare client
+  document.querySelectorAll('.client-container').forEach(clientDiv => {
+    const clientId = clientDiv.getAttribute('data-client-id');
+    const checkboxes = clientDiv.querySelectorAll('.exercise-checkbox');
+    const textarea = clientDiv.querySelector(`#workout-description-${clientId}`);
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const value = cb.value;
+        const currentText = textarea.value;
+
+        if (cb.checked) {
+          insertAtCursor(textarea, value + "\n");
+        } else {
+          const regex = new RegExp(`^${escapeRegExp(value)}\\n?`, 'm');
+          textarea.value = currentText.replace(regex, '');
+        }
+      });
+    });
+  });
+
+  function insertAtCursor(textarea, text) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    textarea.value = before + text + after;
+    const newCursorPos = start + text.length;
+    textarea.selectionStart = textarea.selectionEnd = newCursorPos;
+    textarea.focus();
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // 🔍 Filtrare exerciții
+  function filterExercises(input, clientId) {
+    const filter = input.value.toLowerCase();
+    const container = document.querySelector(`#exercise-list-${clientId}`);
+    const items = container.querySelectorAll('.exercise-item');
+
+    items.forEach(item => {
+      const text = item.getAttribute('data-exercise');
+      if (text.includes(filter)) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+
+
+
+
+{% endblock %}

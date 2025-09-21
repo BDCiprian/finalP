@@ -1,0 +1,18 @@
+# Baza de date locală
+db.sqlite3
+
+# Fișiere generate de migrare și rulare
+*.pyc
+__pycache__/
+*.log
+
+# Setări locale
+*.sqlite3
+*.DS_Store
+
+
+
+# Node/Electron (dacă folosești)
+node_modules/
+electron_app/dist/
+electron_app/node_modules/

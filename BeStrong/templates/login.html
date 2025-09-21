@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Autentificare{% endblock %}
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url("{% static 'images/gym3.jpg' %}") no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+      </style>
+{% endblock %}
+
+
+{% block content %}
+
+<br>
+<div class=" login-container">
+    {% if error %}
+        <div class="alert alert-dismissible show" role="alert">
+            <h6>{{ error }}</h6>
+            <button type="button" class="btn-close  " data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <form method="post" >
+        <h2 >Autentificare</h2>
+        {% csrf_token %}
+        <div class="input-box">
+            <label for="username" >Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="input-box">
+            <label for="password" >Parolă:</label>
+            <input type="password"  id="password" name="password" required>
+        </div>
+
+        <button type="submit" class="bt bt-login">Autentifică-te</button>
+    </form>
+
+    <p >Nu ai cont?
+        <a href="{% url 'register' %}">Înregistrează-te aici</a>
+    </p>
+</div>
+{% endblock %}

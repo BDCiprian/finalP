@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Client{% endblock %}
+{% block content %}
+<div class="container">
+    <br>
+    <p class="lead">Bun venit, <strong>{{ user.username }}</strong>!</p>
+
+    {% if trainer %}
+        <p><strong>Antrenorul tău:</strong> {{ trainer.user.first_name}} {{ trainer.user.last_name}}</p>
+        <h4 class="mt-4">Antrenamente Săptămânale:</h4>
+
+            {% if plans %}
+                <ul class="list-group mt-3">
+                    {% for plan in plans %}
+                        <li class="list-group-item">
+                            <strong>{{ plan.date|date:"d M Y" }}:</strong>
+                            <pre class="mb-0">{{plan.workout_description }}</pre>
+                        </li>
+
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-info mt-3">Nu ai încă antrenamente atribuite.</div>
+            {% endif %}
+    {% else %}
+        <div class="alert alert-warning">
+            Încă nu ai fost asignat unui antrenor.
+            <br>
+            <a href="{% url 'reassign_trainer' %}" class="btn btn-sm btn-primary mt-2">Alege un nou antrenor</a>
+        </div>
+    {% endif %}
+
+    
+
+    
+</div>
+{% endblock %}

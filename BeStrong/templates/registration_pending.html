@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Cont în așteptare{% endblock %}
+{% block head %}
+<meta http-equiv="refresh" content="5;url={% url 'login' %}">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background:  url("{% static 'images/gym1.jpg' %}") no-repeat center center/cover;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div >
+        <h4 >Cont în așteptare</h4>
+        <p>Contul tău de antrenor este în așteptarea aprobării de către administrator.</p>
+        <hr>
+        <p class="mb-0">Te rugăm să revii mai târziu. Vei fi redirectionat spre pagina principala.</p>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Înregistrare{% endblock %}
+
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background:  url("{% static 'images/gym2.jpg' %}") no-repeat center center/cover;
+        min-height: 100vh;
+        }
+      </style>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'login' %}">Autentificare</a>
+    
+  </div>
+</nav>
+
+<div class="page-container">
+    <div class=" form-container"> 
+        <form method="post"  >
+            {% if messages %}
+              {% for message in messages %}
+               <p>{{ message }}</p>
+              {% endfor %}
+            {% endif %}
+
+            <h2 class="text-center mb-4">Înregistrare cont</h2>
+            {% csrf_token %}
+                {{ form.as_p }}
+
+            {% if trainers_exist %}
+                <div id="trainer-select"  style="display: none;">
+                    <label>Alege antrenorul:</label>
+                    {{ trainer_form.as_p }}
+                </div>
+            
+            {% endif %}
+
+
+            <button type="submit" class="bt bt-register">Creează cont</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const roleSelect = document.querySelector('select[name="role"]');
+    const trainerDiv = document.getElementById('trainer-select');
+    const trainerSelect = document.querySelector('select[name="trainer"]');
+
+    function toggleTrainerField() {
+        if (roleSelect.value === 'client') {
+            trainerDiv.style.display = 'block';
+            trainerSelect.setAttribute('required', 'required');
+        } else {
+            trainerDiv.style.display = 'none';
+            trainerSelect.removeAttribute('required');
+        }
+    }
+
+    // La schimbare
+    roleSelect.addEventListener('change', toggleTrainerField);
+
+    // La încărcare inițială
+    toggleTrainerField();
+</script>
+
+{% endblock %}
