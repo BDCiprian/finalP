@@ -69,6 +69,9 @@ class ReassignTrainerForm(forms.ModelForm):
         widgets = {
             'trainer': forms.Select(attrs={'class': 'form-control'})
         }
+        labels = {
+            'trainer': ''
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

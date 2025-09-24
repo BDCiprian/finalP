@@ -1,13 +1,31 @@
 {% extends 'base.html' %}
 {% block title %}Alege un nou antrenor{% endblock %}
+{% block head %}
+{% load static %}
 
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background:  url("{% static 'images/gym1.jpg' %}") no-repeat center center/cover;
+        min-height: 100vh;
+        }
+        .bt {
+            width: 40%;
+            background: linear-gradient(to left top, #3f8fb2, #57aaca);
+            font-size: 18px;
+        }
+        
+      </style>
+{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h3>Alege un nou antrenor</h3>
-    <form method="post">
+<div class="page-container"> 
+    <form method="post" class="form-container">
+        <h3>Alege un nou antrenor</h3><br>
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Salvează</button>
+        <button type="submit" class="bt">Salvează</button>
     </form>
 </div>
 {% endblock %}
